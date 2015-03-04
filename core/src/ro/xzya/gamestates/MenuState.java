@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
-import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -53,7 +52,6 @@ public class MenuState extends GameState {
                 "Quit"
         };
 
-        Save.load();
 
     }
 

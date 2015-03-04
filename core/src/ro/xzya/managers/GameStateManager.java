@@ -1,6 +1,5 @@
 package ro.xzya.managers;
 
-import ro.xzya.gamestates.GameOver;
 import ro.xzya.gamestates.GameState;
 import ro.xzya.gamestates.HighscoreState;
 import ro.xzya.gamestates.MenuState;
@@ -14,7 +13,6 @@ public class GameStateManager {
     public static final int MENU = 0;
     public static final int PLAY = 1;
     public static final int HIGHSCORE = 2;
-    public static final int GAME_OVER = 3;
 
     //current game state
     private GameState gameState;
@@ -37,9 +35,6 @@ public class GameStateManager {
         if (state == HIGHSCORE) {
             //switch to highscore state
             gameState = new HighscoreState(this);
-        }
-        if (state == GAME_OVER) {
-            gameState = new GameOver(this);
         }
     }
 

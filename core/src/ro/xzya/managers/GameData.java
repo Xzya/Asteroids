@@ -63,7 +63,7 @@ public class GameData implements Serializable {
             int j;
             for (j = i - 1;
                  j >= 0 && highscores[j] < score;
-                 j--) {
+                 j++) {
                 highscores[j + 1] = highscores[j];
                 names[j + 1] = names[j];
             }
