@@ -17,6 +17,7 @@ import ro.xzya.entities.Player;
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
 import ro.xzya.managers.Jukebox;
+import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -128,7 +129,10 @@ public class PlayState extends GameState {
         player.update(dt);
         if (player.isDead()) {
             if (player.getLives() == 0) {
-                gsm.setState(GameStateManager.MENU);
+                Jukebox.stopAll();
+                Save.gd.setTentativeScore(player.getScore());
+                gsm.setState(GameStateManager.GAME_OVER);
+                return;
             }
             player.reset();
             player.loseLife();
@@ -276,14 +280,19 @@ public class PlayState extends GameState {
 
     @Override
     public void handleInput() {
-        player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                || Gdx.input.isKeyPressed(Input.Keys.A));
-        player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                || Gdx.input.isKeyPressed(Input.Keys.D));
-        player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
-                || Gdx.input.isKeyPressed(Input.Keys.W));
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            player.shoot();
+        if(!player.isHit()) {
+            player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                    || Gdx.input.isKeyPressed(Input.Keys.A));
+            player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                    || Gdx.input.isKeyPressed(Input.Keys.D));
+            player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
+                    || Gdx.input.isKeyPressed(Input.Keys.W));
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                player.shoot();
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            gsm.setState(GameStateManager.MENU);
         }
     }
 
