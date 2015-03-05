@@ -13,6 +13,12 @@ import ro.xzya.managers.Jukebox;
  */
 public class FlyingSaucer extends SpaceObject {
 
+    private static final int dpSize1 = ((int)(Game.HEIGHT * 0.025)); //10px
+    private static final int dpSize2 = ((int)(Game.HEIGHT * 0.0075)); //3px
+    private static final int dpSize3 = ((int)(Game.HEIGHT * 0.0125)); //5px
+    private static final int dpSize4 = ((int)(Game.HEIGHT * 0.015)); //6px
+    private static final int dpSize5 = ((int)(Game.HEIGHT * 0.005)); //2px
+
     private ArrayList<Bullet> bullets;
 
     private int type;
@@ -47,7 +53,8 @@ public class FlyingSaucer extends SpaceObject {
         this.player = player;
         this.bullets = bullets;
 
-        speed = 70;
+//        speed = 70;
+        speed = ((int)(Game.WIDTH * 0.13));
         if (direction == LEFT) {
             dx = -speed;
             x = Game.WIDTH;
@@ -80,41 +87,78 @@ public class FlyingSaucer extends SpaceObject {
 
     private void setShape() {
         if (type == LARGE) {
-            shapex[0] = x - 10;
+//            shapex[0] = x - 10;
+//            shapey[0] = y;
+//
+//            shapex[1] = x - 3;
+//            shapey[1] = y - 5;
+//
+//            shapex[2] = x + 3;
+//            shapey[2] = y - 5;
+//
+//            shapex[3] = x + 10;
+//            shapey[3] = y;
+//
+//            shapex[4] = x + 3;
+//            shapey[4] = y + 5;
+//
+//            shapex[5] = x - 3;
+//            shapey[5] = y + 5;
+
+            shapex[0] = x - dpSize1;
             shapey[0] = y;
 
-            shapex[1] = x - 3;
-            shapey[1] = y - 5;
+            shapex[1] = x - dpSize2;
+            shapey[1] = y - dpSize3;
 
-            shapex[2] = x + 3;
-            shapey[2] = y - 5;
+            shapex[2] = x + dpSize2;
+            shapey[2] = y - dpSize3;
 
-            shapex[3] = x + 10;
+            shapex[3] = x + dpSize1;
             shapey[3] = y;
 
-            shapex[4] = x + 3;
-            shapey[4] = y + 5;
+            shapex[4] = x + dpSize2;
+            shapey[4] = y + dpSize3;
 
-            shapex[5] = x - 3;
-            shapey[5] = y + 5;
+            shapex[5] = x - dpSize2;
+            shapey[5] = y + dpSize3;
+
         } else if (type == SMALL) {
-            shapex[0] = x - 6;
+//            shapex[0] = x - 6;
+//            shapey[0] = y;
+//
+//            shapex[1] = x - 2;
+//            shapey[1] = y - 3;
+//
+//            shapex[2] = x + 2;
+//            shapey[2] = y - 3;
+//
+//            shapex[3] = x + 6;
+//            shapey[3] = y;
+//
+//            shapex[4] = x + 2;
+//            shapey[4] = y + 3;
+//
+//            shapex[5] = x - 2;
+//            shapey[5] = y + 3;
+
+            shapex[0] = x - dpSize4;
             shapey[0] = y;
 
-            shapex[1] = x - 2;
-            shapey[1] = y - 3;
+            shapex[1] = x - dpSize5;
+            shapey[1] = y - dpSize2;
 
-            shapex[2] = x + 2;
-            shapey[2] = y - 3;
+            shapex[2] = x + dpSize5;
+            shapey[2] = y - dpSize2;
 
-            shapex[3] = x + 6;
+            shapex[3] = x + dpSize4;
             shapey[3] = y;
 
-            shapex[4] = x + 2;
-            shapey[4] = y + 3;
+            shapex[4] = x + dpSize5;
+            shapey[4] = y + dpSize2;
 
-            shapex[5] = x - 2;
-            shapey[5] = y + 3;
+            shapex[5] = x - dpSize5;
+            shapey[5] = y + dpSize2;
         }
     }
 

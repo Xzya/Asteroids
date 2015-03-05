@@ -15,7 +15,10 @@ import ro.xzya.managers.Point2D;
  */
 public class Player extends SpaceObject {
 
-    private final float Pi = 3.1415f;
+    private static final float Pi = 3.1415f;
+    private static final int dpSize1 = ((int)(Game.HEIGHT * 0.02));
+    private static final int dpSize2 = ((int)(Game.HEIGHT * 0.0125));
+    private static final int dpSize3 = ((int)(Game.HEIGHT * 0.015));
 
     private final int MAX_BULLETS = 4;
     private ArrayList<Bullet> bullets;
@@ -80,28 +83,49 @@ public class Player extends SpaceObject {
     }
 
     private void setShape() {
-        shapex[0] = x + MathUtils.cos(radians) * 8;
-        shapey[0] = y + MathUtils.sin(radians) * 8;
+//        shapex[0] = x + MathUtils.cos(radians) * 8;
+//        shapey[0] = y + MathUtils.sin(radians) * 8;
+//
+//        shapex[1] = x + MathUtils.cos(radians - 4 * Pi / 5) * 8;
+//        shapey[1] = y + MathUtils.sin(radians - 4 * Pi / 5) * 8;
+//
+//        shapex[2] = x + MathUtils.cos(radians + Pi) * 5;
+//        shapey[2] = y + MathUtils.sin(radians + Pi) * 5;
+//
+//        shapex[3] = x + MathUtils.cos(radians + 4 * Pi / 5) * 8;
+//        shapey[3] = y + MathUtils.sin(radians + 4 * Pi / 5) * 8;
 
-        shapex[1] = x + MathUtils.cos(radians - 4 * Pi / 5) * 8;
-        shapey[1] = y + MathUtils.sin(radians - 4 * Pi / 5) * 8;
+        shapex[0] = x + MathUtils.cos(radians) * dpSize1;
+        shapey[0] = y + MathUtils.sin(radians) * dpSize1;
 
-        shapex[2] = x + MathUtils.cos(radians + Pi) * 5;
-        shapey[2] = y + MathUtils.sin(radians + Pi) * 5;
+        shapex[1] = x + MathUtils.cos(radians - 4 * Pi / 5) * dpSize1;
+        shapey[1] = y + MathUtils.sin(radians - 4 * Pi / 5) * dpSize1;
 
-        shapex[3] = x + MathUtils.cos(radians + 4 * Pi / 5) * 8;
-        shapey[3] = y + MathUtils.sin(radians + 4 * Pi / 5) * 8;
+        shapex[2] = x + MathUtils.cos(radians + Pi) * dpSize2;
+        shapey[2] = y + MathUtils.sin(radians + Pi) * dpSize2;
+
+        shapex[3] = x + MathUtils.cos(radians + 4 * Pi / 5) * dpSize1;
+        shapey[3] = y + MathUtils.sin(radians + 4 * Pi / 5) * dpSize1;
     }
 
     private void setFlame() {
-        flamex[0] = x + MathUtils.cos(radians - 5 * Pi / 6) * 5;
-        flamey[0] = y + MathUtils.sin(radians - 5 * Pi / 6) * 5;
+//        flamex[0] = x + MathUtils.cos(radians - 5 * Pi / 6) * 5;
+//        flamey[0] = y + MathUtils.sin(radians - 5 * Pi / 6) * 5;
+//
+//        flamex[1] = x + MathUtils.cos(radians - Pi) * (6 + accelerationTimer * 50);
+//        flamey[1] = y + MathUtils.sin(radians - Pi) * (6 + accelerationTimer * 50);
+//
+//        flamex[2] = x + MathUtils.cos(radians + 5 * Pi / 6) * 5;
+//        flamey[2] = y + MathUtils.sin(radians + 5 * Pi / 6) * 5;
 
-        flamex[1] = x + MathUtils.cos(radians - Pi) * (6 + accelerationTimer * 50);
-        flamey[1] = y + MathUtils.sin(radians - Pi) * (6 + accelerationTimer * 50);
+        flamex[0] = x + MathUtils.cos(radians - 5 * Pi / 6) * dpSize2;
+        flamey[0] = y + MathUtils.sin(radians - 5 * Pi / 6) * dpSize2;
 
-        flamex[2] = x + MathUtils.cos(radians + 5 * Pi / 6) * 5;
-        flamey[2] = y + MathUtils.sin(radians + 5 * Pi / 6) * 5;
+        flamex[1] = x + MathUtils.cos(radians - Pi) * (dpSize3 + accelerationTimer * 50);
+        flamey[1] = y + MathUtils.sin(radians - Pi) * (dpSize3 + accelerationTimer * 50);
+
+        flamex[2] = x + MathUtils.cos(radians + 5 * Pi / 6) * dpSize2;
+        flamey[2] = y + MathUtils.sin(radians + 5 * Pi / 6) * dpSize2;
     }
 
     public void setLeft(boolean b) {
@@ -148,6 +172,18 @@ public class Player extends SpaceObject {
 
     public int getLives() {
         return extraLives;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public boolean isUp() {
+        return up;
     }
 
     public void loseLife() {

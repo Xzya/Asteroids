@@ -3,7 +3,7 @@ package ro.xzya.entities;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 
-import ro.xzya.entities.SpaceObject;
+import ro.xzya.game.Game;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -29,17 +29,20 @@ public class Asteroid extends SpaceObject {
 
         if (type == SMALL) {
             numPoints = 8;
-            width = height = 12;
+//            width = height = 12;
+            width = height = ((int)(Game.HEIGHT * 0.04));
             speed = MathUtils.random(70, 100);
             score = 100;
         } else if (type == MEDIUM) {
             numPoints = 10;
-            width = height = 20;
+//            width = height = 20;
+            width = height = ((int)(Game.HEIGHT * 0.065));
             speed = MathUtils.random(50, 60);
             score = 50;
         } else if (type == LARGE) {
             numPoints = 12;
-            width = height = 40;
+//            width = height = 40;
+            width = height = ((int)(Game.HEIGHT * 0.13));
             speed = MathUtils.random(20, 30);
             score = 20;
         }

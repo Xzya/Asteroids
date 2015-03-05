@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,14 @@ import ro.xzya.managers.Save;
  */
 public class PlayState extends GameState {
 
+    private static final int dpSize1 = ((int) (Game.WIDTH * 0.08));//40
+    private static final int dpSize2 = ((int) (Game.HEIGHT * 0.975));//390
+    private static final int dpSize3 = ((int) (Game.WIDTH * 0.02));//10
+    private static final int dpSize4 = ((int) (Game.HEIGHT * 0.9));//360
+
+    private final int multiTouch = 4;
+    private Vector3 touchPoint[];
+
     private SpriteBatch sb;
     private ShapeRenderer sr;
 
@@ -32,6 +43,9 @@ public class PlayState extends GameState {
     private Player hudPlayer;
 
     private Player player;
+    private float shootTimer;
+    private float shootTime;
+
     private ArrayList<Bullet> bullets;
     private ArrayList<Asteroid> asteroids;
     private ArrayList<Bullet> enemyBullets;
@@ -58,6 +72,12 @@ public class PlayState extends GameState {
 
     @Override
     public void init() {
+
+                if (Game.isMobile) {
+//        if (true) {
+            setTouchInput();
+        }
+
         sb = new SpriteBatch();
         sr = new ShapeRenderer();
 
@@ -67,12 +87,15 @@ public class PlayState extends GameState {
                 Gdx.files.internal("fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+//        parameter.size = 20;
+        parameter.size = ((int) (Game.HEIGHT * 0.05));
         font = gen.generateFont(parameter);
 
         bullets = new ArrayList<Bullet>();
 
         player = new Player(bullets);
+        shootTimer = 0;
+        shootTime = 0.2f;
 
         asteroids = new ArrayList<Asteroid>();
 
@@ -93,6 +116,12 @@ public class PlayState extends GameState {
         currentDelay = maxDelay;
         bgTimer = maxDelay;
         playLowPulse = true;
+
+        //init touch points
+        touchPoint = new Vector3[multiTouch];
+        for (int i = 0; i < multiTouch; i++) {
+            touchPoint[i] = new Vector3();
+        }
     }
 
     private void createParticles(float x, float y) {
@@ -127,6 +156,7 @@ public class PlayState extends GameState {
 
     @Override
     public void update(float dt) {
+
         //get user input
         handleInput();
 
@@ -230,6 +260,8 @@ public class PlayState extends GameState {
             playLowPulse = !playLowPulse;
             bgTimer = 0;
         }
+
+
     }
 
     private void checkCollisions() {
@@ -349,7 +381,7 @@ public class PlayState extends GameState {
                     splitAsteroids(a);
                     enemyBullets.remove(i);
                     i--;
-                    createParticles(a.getx(),a.gety());
+                    createParticles(a.getx(), a.gety());
                     Jukebox.stop("explode");
                     break;
                 }
@@ -410,34 +442,136 @@ public class PlayState extends GameState {
         //draw score
         sb.setColor(1, 1, 1, 1);
         sb.begin();
-        font.draw(sb, Long.toString(player.getScore()), 40, 390);
+//        font.draw(sb, Long.toString(player.getScore()), 40, 390);
+        font.draw(sb, Long.toString(player.getScore()), dpSize1, dpSize2);
         sb.end();
 
         //draw lives
         for (int i = 0; i < player.getLives(); i++) {
-            hudPlayer.setPosition(40 + i * 10, 360);
+//            hudPlayer.setPosition(40 + i * 10, 360);
+            hudPlayer.setPosition(dpSize1 + i * dpSize3, dpSize4);
             hudPlayer.draw(sr);
         }
 
+        //draw on-screen controls
+        if (Game.isMobile) {
+//        if (true) {
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.rect(Game.gui.getWleftBounds().getX(), Game.gui.getWleftBounds().getY(), Game.gui.getWleftBounds().getWidth(), Game.gui.getWleftBounds().getHeight());
+            sr.rect(Game.gui.getWrightBounds().getX(), Game.gui.getWrightBounds().getY(), Game.gui.getWrightBounds().getWidth(), Game.gui.getWrightBounds().getHeight());
+            sr.rect(Game.gui.getBack().getX(), Game.gui.getBack().getY(), Game.gui.getBack().getWidth(), Game.gui.getBack().getHeight());
+            sr.circle(Game.gui.getA().x, Game.gui.getA().y, Game.gui.getA().radius);
+            sr.circle(Game.gui.getB().x, Game.gui.getB().y, Game.gui.getB().radius);
+            sr.end();
+        }
 
     }
 
     @Override
     public void handleInput() {
-        if (!player.isHit()) {
-            player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                    || Gdx.input.isKeyPressed(Input.Keys.A));
-            player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                    || Gdx.input.isKeyPressed(Input.Keys.D));
-            player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
-                    || Gdx.input.isKeyPressed(Input.Keys.W));
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                player.shoot();
+        if (!Game.isMobile) {
+//        if (true) {
+            if (!player.isHit()) {
+                player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                        || Gdx.input.isKeyPressed(Input.Keys.A));
+                player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                        || Gdx.input.isKeyPressed(Input.Keys.D));
+                player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
+                        || Gdx.input.isKeyPressed(Input.Keys.W));
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                    player.shoot();
+                }
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                Jukebox.stopAll();
+                gsm.setState(GameStateManager.MENU);
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            gsm.setState(GameStateManager.MENU);
+
+
+
+        //handle touch input
+        if (Game.isMobile) {
+//        if (true) {
+            shootTimer += Gdx.graphics.getDeltaTime();
+            player.setLeft(Game.gui.isPressedLeft());
+            player.setRight(Game.gui.isPressedRight());
+            player.setUp(Game.gui.isPressedB());
+            if (Game.gui.isPressedA()) {
+                if (shootTimer >= shootTime) {
+                    shootTimer = 0;
+                    player.shoot();
+                }
+            }
         }
+
+    }
+
+    private void setTouchInput() {
+        Gdx.input.setInputProcessor(Game.gui.getStage());
+        //handle touch input
+
+        Game.gui.getaWLeftBounds().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedLeft(true);
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedLeft(false);
+            }
+        });
+
+        Game.gui.getaWRightBounds().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedRight(true);
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedRight(false);
+            }
+        });
+
+        Game.gui.getaA().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedA(true);
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedA(false);
+            }
+        });
+
+        Game.gui.getaB().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedB(true);
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Game.gui.setPressedB(false);
+            }
+        });
+
+        Game.gui.getaBack().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Jukebox.stopAll();
+                gsm.setState(GameStateManager.MENU);
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -446,6 +580,10 @@ public class PlayState extends GameState {
         sb.dispose();
         sr.dispose();
         font.dispose();
+
+        if (Game.isMobile){
+            Game.gui.clearListeners();
+        }
 
     }
 }

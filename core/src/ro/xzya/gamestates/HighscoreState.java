@@ -5,6 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
@@ -15,7 +19,14 @@ import ro.xzya.managers.Save;
  */
 public class HighscoreState extends GameState {
 
+    private static final int dpSize1 = ((int) (Game.HEIGHT * 0.75)); //300dp
+    private static final int dpSize2 = ((int) (Game.HEIGHT * 0.675)); //270dp
+    private static final int dpSize3 = ((int) (Game.HEIGHT * 0.05)); //20dp
+
+    private Vector3 touchPoint;
+
     private SpriteBatch sb;
+    private ShapeRenderer sr;
 
     private BitmapFont font;
 
@@ -28,7 +39,14 @@ public class HighscoreState extends GameState {
 
     @Override
     public void init() {
+
+                if (Game.isMobile) {
+//        if (true) {
+            setTouchInput();
+        }
+
         sb = new SpriteBatch();
+        sr = new ShapeRenderer();
 
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
 
@@ -42,6 +60,8 @@ public class HighscoreState extends GameState {
 
         highScores = Save.gd.getHighscores();
         names = Save.gd.getNames();
+
+        touchPoint = new Vector3();
     }
 
     @Override
@@ -64,7 +84,8 @@ public class HighscoreState extends GameState {
                 sb,
                 s,
                 (Game.WIDTH - w) / 2,
-                300
+//                300
+                dpSize1
         );
 
         for (int i = 0; i < highScores.length; i++) {
@@ -79,28 +100,68 @@ public class HighscoreState extends GameState {
                     sb,
                     s,
                     (Game.WIDTH - w) / 2,
-                    270 - 20 * i
+//                    270 - 20 * i
+                    dpSize2 - dpSize3 * i
             );
         }
 
         sb.end();
 
+        //draw on-screen controls
+        if (Game.isMobile) {
+//        if (true) {
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.rect(Game.gui.getWleftBounds().getX(), Game.gui.getWleftBounds().getY(), Game.gui.getWleftBounds().getWidth(), Game.gui.getWleftBounds().getHeight());
+            sr.rect(Game.gui.getWrightBounds().getX(), Game.gui.getWrightBounds().getY(), Game.gui.getWrightBounds().getWidth(), Game.gui.getWrightBounds().getHeight());
+            sr.circle(Game.gui.getA().x, Game.gui.getA().y, Game.gui.getA().radius);
+            sr.circle(Game.gui.getB().x, Game.gui.getB().y, Game.gui.getB().radius);
+            sr.end();
+        }
     }
 
     @Override
     public void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
-                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            gsm.setState(GameStateManager.MENU);
+        if (!Game.isMobile) {
+//        if (true) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
+                    || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
+                    || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                gsm.setState(GameStateManager.MENU);
+            }
         }
+    }
+
+    private void setTouchInput() {
+        Gdx.input.setInputProcessor(Game.gui.getStage());
+        //handle touch input
+
+        Game.gui.getaA().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                gsm.setState(GameStateManager.MENU);
+                return true;
+            }
+        });
+
+        Game.gui.getaB().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                gsm.setState(GameStateManager.MENU);
+                return true;
+            }
+        });
     }
 
     @Override
     public void dispose() {
 
         sb.dispose();
+        sr.dispose();
         font.dispose();
+
+        if (Game.isMobile){
+            Game.gui.clearListeners();
+        }
 
     }
 }

@@ -3,10 +3,14 @@ package ro.xzya.entities;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 
+import ro.xzya.game.Game;
+
 /**
  * Created by Xzya on 4/3/2015.
  */
 public class Particle extends SpaceObject {
+
+    private static final int dpSize1 = ((int)(Game.HEIGHT * 0.005));
 
     private float timer;
     private float time;
@@ -15,7 +19,8 @@ public class Particle extends SpaceObject {
     public Particle(float x, float y) {
         this.x = x;
         this.y = y;
-        width = height = 2;
+//        width = height = 2;
+        width = height = dpSize1;
 
         speed = 50;
 

@@ -8,19 +8,29 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 
 import ro.xzya.entities.Asteroid;
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
-import ro.xzya.managers.InputManager;
 import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
  */
 public class MenuState extends GameState {
+
+    private static final int dpSize1 = ((int) (Game.HEIGHT * 0.14)); //56dp
+    private static final int dpSize2 = ((int) (Game.HEIGHT * 0.05)); //20dp
+    private static final int dpSize3 = ((int) (Game.HEIGHT * 0.75));
+    private static final int dpSize4 = ((int) (Game.HEIGHT * 0.45)); //180
+    private static final int dpSize5 = ((int) (Game.HEIGHT * 0.125));
+
+    private Vector3 touchPoint;
 
     private SpriteBatch sb;
     private ShapeRenderer sr;
@@ -35,15 +45,18 @@ public class MenuState extends GameState {
     private int currentItem;
     private String[] menuItems;
 
-    private InputManager touch;
-
     public MenuState(GameStateManager gsm) {
         super(gsm);
     }
 
     @Override
     public void init() {
-        touch = new InputManager();
+
+        if (Game.isMobile) {
+//        if (true) {
+            setTouchInput();
+        }
+
         sb = new SpriteBatch();
         sr = new ShapeRenderer();
 
@@ -52,12 +65,14 @@ public class MenuState extends GameState {
                 Gdx.files.internal("fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 56;
+//        parameter.size = 56;
+        parameter.size = dpSize1;
 
         titleFont = gen.generateFont(parameter);
         titleFont.setColor(Color.WHITE);
 
-        parameter.size = 20;
+//        parameter.size = 20;
+        parameter.size = dpSize2;
         font = gen.generateFont(parameter);
 
         menuItems = new String[]{
@@ -77,6 +92,9 @@ public class MenuState extends GameState {
                     Asteroid.LARGE
             ));
         }
+
+        //init touch points
+        touchPoint = new Vector3();
 
     }
 
@@ -110,7 +128,7 @@ public class MenuState extends GameState {
                 sb,
                 title,
                 (Game.WIDTH - width) / 2,
-                300
+                dpSize3
         );
 
         //draw menu
@@ -122,30 +140,78 @@ public class MenuState extends GameState {
                     sb,
                     menuItems[i],
                     (Game.WIDTH - width) / 2,
-                    180 - 50 * i
+//                    180 - 50 * i
+                    dpSize4 - dpSize5 * i
             );
         }
         sb.end();
+
+        //draw on-screen controls
+        if (Game.isMobile) {
+//        if (true) {
+            sr.begin(ShapeRenderer.ShapeType.Line);
+            sr.rect(Game.gui.getWleftBounds().getX(), Game.gui.getWleftBounds().getY(), Game.gui.getWleftBounds().getWidth(), Game.gui.getWleftBounds().getHeight());
+            sr.rect(Game.gui.getWrightBounds().getX(), Game.gui.getWrightBounds().getY(), Game.gui.getWrightBounds().getWidth(), Game.gui.getWrightBounds().getHeight());
+            sr.circle(Game.gui.getA().x, Game.gui.getA().y, Game.gui.getA().radius);
+            sr.circle(Game.gui.getB().x, Game.gui.getB().y, Game.gui.getB().radius);
+            sr.end();
+        }
     }
 
     @Override
     public void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)
-                || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            if (currentItem > 0) {
-                currentItem--;
+        if (!Game.isMobile) {
+//        if (true) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP)
+                    || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+                if (currentItem > 0) {
+                    currentItem--;
+                }
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)
+                    || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                if (currentItem < menuItems.length - 1) {
+                    currentItem++;
+                }
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
+                    || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                select();
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)
-                || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            if (currentItem < menuItems.length - 1) {
-                currentItem++;
+    }
+
+    private void setTouchInput() {
+        Gdx.input.setInputProcessor(Game.gui.getStage());
+        //handle touch input
+
+        Game.gui.getaWLeftBounds().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (currentItem > 0) {
+                    currentItem--;
+                }
+                return true;
             }
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            select();
-        }
+        });
+
+        Game.gui.getaWRightBounds().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (currentItem < menuItems.length - 1) {
+                    currentItem++;
+                }
+                return true;
+            }
+        });
+
+        Game.gui.getaA().addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                select();
+                return true;
+            }
+        });
     }
 
     private void select() {
@@ -167,5 +233,9 @@ public class MenuState extends GameState {
         titleFont.dispose();
         font.dispose();
 
+        if (Game.isMobile){
+            Game.gui.clearListeners();
+        }
     }
+
 }
