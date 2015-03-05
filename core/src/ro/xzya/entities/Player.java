@@ -4,12 +4,11 @@ package ro.xzya.entities;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import ro.xzya.game.Game;
 import ro.xzya.managers.Jukebox;
+import ro.xzya.managers.Point2D;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -39,8 +38,8 @@ public class Player extends SpaceObject {
     private float hitTimer;
     private float hitTime;
 
-    private Line2D.Float[] hitLines;
-    private Point2D.Float[] hitLinesVector;
+    private Point2D[] hitLines;
+    private Point2D[] hitLinesVector;
 
     private long score;
     private int extraLives;
@@ -62,6 +61,9 @@ public class Player extends SpaceObject {
 
         flamex = new float[3];
         flamey = new float[3];
+
+        hitLines = new Point2D[4];
+        hitLinesVector = new Point2D[4];
 
         radians = Pi / 2;
         rotationSpeed = 3;
@@ -174,30 +176,28 @@ public class Player extends SpaceObject {
         left = right = up = false;
         Jukebox.stop("thruster");
 
-        hitLines = new Line2D.Float[4];
         for (int i = 0, j = hitLines.length - 1;
              i < hitLines.length;
              j = i++) {
-            hitLines[i] = new Line2D.Float(
+            hitLines[i] = new Point2D(
                     shapex[i], shapey[i],
                     shapex[j], shapey[j]
             );
         }
 
-        hitLinesVector = new Point2D.Float[4];
-        hitLinesVector[0] = new Point2D.Float(
+        hitLinesVector[0] = new Point2D(
                 MathUtils.cos(radians + 1.5f),
                 MathUtils.sin(radians + 1.5f)
         );
-        hitLinesVector[1] = new Point2D.Float(
+        hitLinesVector[1] = new Point2D(
                 MathUtils.cos(radians - 1.5f),
                 MathUtils.sin(radians - 1.5f)
         );
-        hitLinesVector[2] = new Point2D.Float(
+        hitLinesVector[2] = new Point2D(
                 MathUtils.cos(radians - 2.8f),
                 MathUtils.sin(radians - 2.8f)
         );
-        hitLinesVector[3] = new Point2D.Float(
+        hitLinesVector[3] = new Point2D(
                 MathUtils.cos(radians + 2.8f),
                 MathUtils.sin(radians + 2.8f)
         );
@@ -213,12 +213,10 @@ public class Player extends SpaceObject {
                 hitTimer = 0;
             }
             for (int i = 0; i < hitLines.length; i++) {
-                hitLines[i].setLine(
-                        hitLines[i].x1 + hitLinesVector[i].x * 10 * dt,
-                        hitLines[i].y1 + hitLinesVector[i].y * 10 * dt,
-                        hitLines[i].x2 + hitLinesVector[i].x * 10 * dt,
-                        hitLines[i].y2 + hitLinesVector[i].y * 10 * dt
-                );
+                hitLines[i].x1 = hitLines[i].x1 + hitLinesVector[i].x1 * 10 * dt;
+                hitLines[i].y1 = hitLines[i].y1 + hitLinesVector[i].y1 * 10 * dt;
+                hitLines[i].x2 = hitLines[i].x2 + hitLinesVector[i].x1 * 10 * dt;
+                hitLines[i].y2 = hitLines[i].y2 + hitLinesVector[i].y1 * 10 * dt;
             }
             return;
         }

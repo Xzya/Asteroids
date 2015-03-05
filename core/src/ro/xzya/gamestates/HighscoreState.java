@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
+import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -29,12 +30,22 @@ public class HighscoreState extends GameState {
     public void init() {
         sb = new SpriteBatch();
 
+        String s = "";
+        if (Game.client.equals("desktop")) {
+            s += Game.BASE_URL;
+        }
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
-                Gdx.files.internal("../android/assets/fonts/Hyperspace Bold.ttf")
+
+                Gdx.files.internal(s + "fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         font = gen.generateFont(parameter);
+
+        Save.load();
+
+        highScores = Save.gd.getHighscores();
+        names = Save.gd.getNames();
     }
 
     @Override
@@ -47,12 +58,34 @@ public class HighscoreState extends GameState {
 
         sb.setProjectionMatrix(Game.cam.combined);
         sb.begin();
+
+        String s;
+        float w;
+
+        s = "Highscores";
+        w = font.getBounds(s).width;
         font.draw(
                 sb,
-                "Highscores",
-                Game.WIDTH / 2,
-                Game.HEIGHT - 100
+                s,
+                (Game.WIDTH - w) / 2,
+                300
         );
+
+        for (int i = 0; i < highScores.length; i++) {
+            s = String.format(
+                    "%2d. %7s %s",
+                    i + 1,
+                    highScores[i],
+                    names[i]
+            );
+            w = font.getBounds(s).width;
+            font.draw(
+                    sb,
+                    s,
+                    (Game.WIDTH - w) / 2,
+                    270 - 20 * i
+            );
+        }
 
         sb.end();
 
@@ -69,6 +102,9 @@ public class HighscoreState extends GameState {
 
     @Override
     public void dispose() {
+
+        sb.dispose();
+        font.dispose();
 
     }
 }

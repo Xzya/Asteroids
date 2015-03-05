@@ -3,6 +3,8 @@ package ro.xzya.entities;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 
+import ro.xzya.entities.SpaceObject;
+
 /**
  * Created by Xzya on 4/3/2015.
  */

@@ -12,11 +12,13 @@ import java.util.ArrayList;
 
 import ro.xzya.entities.Asteroid;
 import ro.xzya.entities.Bullet;
+import ro.xzya.entities.FlyingSaucer;
 import ro.xzya.entities.Particle;
 import ro.xzya.entities.Player;
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
 import ro.xzya.managers.Jukebox;
+import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -32,6 +34,11 @@ public class PlayState extends GameState {
     private Player player;
     private ArrayList<Bullet> bullets;
     private ArrayList<Asteroid> asteroids;
+    private ArrayList<Bullet> enemyBullets;
+
+    private FlyingSaucer flyingSaucer;
+    private float fsTimer;
+    private float fsTime;
 
     private ArrayList<Particle> particles;
 
@@ -55,8 +62,13 @@ public class PlayState extends GameState {
         sr = new ShapeRenderer();
 
         //set font
+        String s = "";
+        if (Game.client.equals("desktop")) {
+            s += Game.BASE_URL;
+        }
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
-                Gdx.files.internal("../android/assets/fonts/Hyperspace Bold.ttf")
+
+                Gdx.files.internal(s + "fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
@@ -74,6 +86,10 @@ public class PlayState extends GameState {
         spawnAsteroids();
 
         hudPlayer = new Player(null);
+
+        fsTimer = 0;
+        fsTime = 15;
+        enemyBullets = new ArrayList<Bullet>();
 
         //set up bg music
         maxDelay = 1;
@@ -128,18 +144,60 @@ public class PlayState extends GameState {
         player.update(dt);
         if (player.isDead()) {
             if (player.getLives() == 0) {
-                gsm.setState(GameStateManager.MENU);
+                Jukebox.stopAll();
+                Save.gd.setTentativeScore(player.getScore());
+                gsm.setState(GameStateManager.GAME_OVER);
+                return;
             }
             player.reset();
             player.loseLife();
+            flyingSaucer = null;
+            Jukebox.stop("smallsaucer");
+            Jukebox.stop("largesaucer");
             return;
         }
 
-        //update bullets
+        //update player bullets
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).update(dt);
             if (bullets.get(i).shouldRemove()) {
                 bullets.remove(i);
+                i--;
+            }
+        }
+
+        //update flying saucer
+        if (flyingSaucer == null) {
+            fsTimer += dt;
+            if (fsTimer >= fsTime) {
+                fsTimer = 0;
+                int type = MathUtils.random() < 0.5 ?
+                        FlyingSaucer.SMALL : FlyingSaucer.LARGE;
+                int direction = MathUtils.random() < 0.5 ?
+                        FlyingSaucer.RIGHT : FlyingSaucer.LEFT;
+                flyingSaucer = new FlyingSaucer(
+                        type,
+                        direction,
+                        player,
+                        enemyBullets
+                );
+            }
+        }
+        //if there is a flying saucer already
+        else {
+            flyingSaucer.update(dt);
+            if (flyingSaucer.shouldRemove()) {
+                flyingSaucer = null;
+                Jukebox.stop("smallsaucer");
+                Jukebox.stop("largesaucer");
+            }
+        }
+
+        //update fs bullets
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            enemyBullets.get(i).update(dt);
+            if (enemyBullets.get(i).shouldRemove()) {
+                enemyBullets.remove(i);
                 i--;
             }
         }
@@ -244,9 +302,19 @@ public class PlayState extends GameState {
         //draw player
         player.draw(sr);
 
-        //draw bullets
+        //draw player bullets
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).draw(sr);
+        }
+
+        //draw flying saucer
+        if (flyingSaucer != null) {
+            flyingSaucer.draw(sr);
+        }
+
+        //draw fs bullets
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            enemyBullets.get(i).draw(sr);
         }
 
         //draw asteroids
@@ -276,19 +344,28 @@ public class PlayState extends GameState {
 
     @Override
     public void handleInput() {
-        player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                || Gdx.input.isKeyPressed(Input.Keys.A));
-        player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                || Gdx.input.isKeyPressed(Input.Keys.D));
-        player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
-                || Gdx.input.isKeyPressed(Input.Keys.W));
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            player.shoot();
+        if (!player.isHit()) {
+            player.setLeft(Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                    || Gdx.input.isKeyPressed(Input.Keys.A));
+            player.setRight(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                    || Gdx.input.isKeyPressed(Input.Keys.D));
+            player.setUp(Gdx.input.isKeyPressed(Input.Keys.UP)
+                    || Gdx.input.isKeyPressed(Input.Keys.W));
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                player.shoot();
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            gsm.setState(GameStateManager.MENU);
         }
     }
 
     @Override
     public void dispose() {
+
+        sb.dispose();
+        sr.dispose();
+        font.dispose();
 
     }
 }

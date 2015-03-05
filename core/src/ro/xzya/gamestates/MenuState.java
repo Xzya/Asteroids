@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
+import ro.xzya.managers.InputManager;
+import ro.xzya.managers.Save;
 
 /**
  * Created by Xzya on 4/3/2015.
@@ -25,17 +27,24 @@ public class MenuState extends GameState {
     private int currentItem;
     private String[] menuItems;
 
+    private InputManager touch;
+
     public MenuState(GameStateManager gsm) {
         super(gsm);
     }
 
     @Override
     public void init() {
-
+        touch = new InputManager();
         sb = new SpriteBatch();
 
+        String s = "";
+        if (Game.client.equals("desktop")) {
+            s += Game.BASE_URL;
+        }
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
-                Gdx.files.internal("../android/assets/fonts/Hyperspace Bold.ttf")
+
+                Gdx.files.internal(s + "fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 56;
@@ -52,6 +61,7 @@ public class MenuState extends GameState {
                 "Quit"
         };
 
+        Save.load();
 
     }
 
@@ -110,7 +120,8 @@ public class MenuState extends GameState {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+                || Gdx.input.justTouched()) {
             select();
         }
     }
@@ -128,6 +139,10 @@ public class MenuState extends GameState {
 
     @Override
     public void dispose() {
+
+        sb.dispose();
+        titleFont.dispose();
+        font.dispose();
 
     }
 }
