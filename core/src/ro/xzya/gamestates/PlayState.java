@@ -277,6 +277,90 @@ public class PlayState extends GameState {
                 }
             }
         }
+
+        //player-flying saucer collision
+        if (flyingSaucer != null) {
+            if (player.intersects(flyingSaucer)) {
+                player.hit();
+                createParticles(player.getx(), player.gety());
+                createParticles(flyingSaucer.getx(), flyingSaucer.gety());
+                flyingSaucer = null;
+                Jukebox.stop("smallsaucer");
+                Jukebox.stop("largesaucer");
+                Jukebox.stop("explode");
+            }
+        }
+
+        //bullet-flying saucer collision
+        if (flyingSaucer != null) {
+            for (int i = 0; i < bullets.size(); i++) {
+                Bullet b = bullets.get(i);
+                if (flyingSaucer.contains(b.getx(), b.gety())) {
+                    bullets.remove(i);
+                    i--;
+                    createParticles(flyingSaucer.getx(), flyingSaucer.gety());
+                    player.incrementScore(flyingSaucer.getScore());
+                    flyingSaucer = null;
+                    Jukebox.stop("smallsaucer");
+                    Jukebox.stop("largesaucer");
+                    Jukebox.stop("explode");
+                    break;
+                }
+            }
+        }
+
+        //player-enemy bullets collision
+        if (!player.isHit()) {
+            for (int i = 0; i < enemyBullets.size(); i++) {
+                Bullet b = enemyBullets.get(i);
+                if (player.contains(b.getx(), b.gety())) {
+                    player.hit();
+                    enemyBullets.remove(i);
+                    i--;
+                    Jukebox.play("explode");
+                    break;
+                }
+            }
+        }
+
+        //flying saucer-asteroids collision
+        if (flyingSaucer != null) {
+            for (int i = 0; i < asteroids.size(); i++) {
+                Asteroid a = asteroids.get(i);
+                if (a.intersects(flyingSaucer)) {
+                    asteroids.remove(i);
+                    i--;
+                    splitAsteroids(a);
+                    createParticles(a.getx(), a.gety());
+                    createParticles(flyingSaucer.getx(), flyingSaucer.gety());
+                    flyingSaucer = null;
+                    Jukebox.stop("smallsaucer");
+                    Jukebox.stop("largesaucer");
+                    Jukebox.stop("explode");
+                    break;
+                }
+            }
+        }
+
+        //asteroids-enemy bullets collision
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            Bullet b = enemyBullets.get(i);
+            for (int j = 0; j < asteroids.size(); j++) {
+                Asteroid a = asteroids.get(j);
+                if (a.contains(b.getx(), b.gety())) {
+                    asteroids.remove(j);
+                    j--;
+                    splitAsteroids(a);
+                    enemyBullets.remove(i);
+                    i--;
+                    createParticles(a.getx(),a.gety());
+                    Jukebox.stop("explode");
+                    break;
+                }
+            }
+        }
+
+
     }
 
     private void splitAsteroids(Asteroid a) {

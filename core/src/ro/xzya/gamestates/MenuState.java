@@ -6,7 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 
+import java.util.ArrayList;
+
+import ro.xzya.entities.Asteroid;
 import ro.xzya.game.Game;
 import ro.xzya.managers.GameStateManager;
 import ro.xzya.managers.InputManager;
@@ -18,11 +23,14 @@ import ro.xzya.managers.Save;
 public class MenuState extends GameState {
 
     private SpriteBatch sb;
+    private ShapeRenderer sr;
 
     private BitmapFont titleFont;
     private BitmapFont font;
 
     private final String title = "Asteroids";
+
+    private ArrayList<Asteroid> asteroids;
 
     private int currentItem;
     private String[] menuItems;
@@ -37,6 +45,7 @@ public class MenuState extends GameState {
     public void init() {
         touch = new InputManager();
         sb = new SpriteBatch();
+        sr = new ShapeRenderer();
 
         String s = "";
         if (Game.client.equals("desktop")) {
@@ -63,6 +72,16 @@ public class MenuState extends GameState {
 
         Save.load();
 
+        //init bg asteroids
+        asteroids = new ArrayList<Asteroid>();
+        for (int i = 0; i < 6; i++) {
+            asteroids.add(new Asteroid(
+                    MathUtils.random(Game.WIDTH),
+                    MathUtils.random(Game.HEIGHT),
+                    Asteroid.LARGE
+            ));
+        }
+
     }
 
     @Override
@@ -70,6 +89,10 @@ public class MenuState extends GameState {
         //handle input
         handleInput();
 
+        //update asteroids
+        for (int i = 0; i < 6; i++) {
+            asteroids.get(i).update(dt);
+        }
 
     }
 
@@ -77,6 +100,12 @@ public class MenuState extends GameState {
     public void draw() {
 
         sb.setProjectionMatrix(Game.cam.combined);
+        sr.setProjectionMatrix(Game.cam.combined);
+
+        //draw asteroids
+        for (int i = 0; i < 6; i++) {
+            asteroids.get(i).draw(sr);
+        }
 
         //draw title
         sb.begin();
@@ -100,8 +129,6 @@ public class MenuState extends GameState {
                     180 - 50 * i
             );
         }
-
-
         sb.end();
     }
 
@@ -120,8 +147,7 @@ public class MenuState extends GameState {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)
-                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-                || Gdx.input.justTouched()) {
+                || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             select();
         }
     }
@@ -141,6 +167,7 @@ public class MenuState extends GameState {
     public void dispose() {
 
         sb.dispose();
+        sr.dispose();
         titleFont.dispose();
         font.dispose();
 
