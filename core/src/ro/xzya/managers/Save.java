@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import ro.xzya.game.Game;
+
 /**
  * Created by Xzya on 4/3/2015.
  */
@@ -16,9 +18,16 @@ public class Save {
 
     public static void save() {
         try {
-            ObjectOutputStream out = new ObjectOutputStream(
-                    new FileOutputStream("highscores.sav")
-            );
+            ObjectOutputStream out;
+            if (!Game.isMobile) {
+                out = new ObjectOutputStream(
+                        new FileOutputStream("highscores.sav")
+                );
+            } else {
+                out = new ObjectOutputStream(
+                        new FileOutputStream(Game.sdcard.getAbsolutePath() + "/Download/highscores.sav")
+                );
+            }
             out.writeObject(gd);
             out.close();
         } catch (IOException e) {
@@ -32,9 +41,16 @@ public class Save {
                 init();
                 return;
             }
-            ObjectInputStream in = new ObjectInputStream(
-                    new FileInputStream("highscores.sav")
-            );
+            ObjectInputStream in;
+            if (!Game.isMobile) {
+                in = new ObjectInputStream(
+                        new FileInputStream("highscores.sav")
+                );
+            } else {
+                in = new ObjectInputStream(
+                        new FileInputStream(Game.sdcard.getAbsolutePath() + "/Download/highscores.sav")
+                );
+            }
             gd = (GameData) in.readObject();
             in.close();
         } catch (IOException e) {
@@ -45,7 +61,12 @@ public class Save {
     }
 
     public static boolean saveFileExists() {
-        File f = new File("highscores.sav");
+        File f;
+        if (!Game.isMobile) {
+            f = new File("highscores.sav");
+        } else {
+            f = new File(Game.sdcard.getAbsolutePath() + "/Download/highscores.sav");
+        }
         return f.exists();
     }
 

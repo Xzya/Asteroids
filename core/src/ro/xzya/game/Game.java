@@ -8,11 +8,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.io.File;
+
 import ro.xzya.managers.GUI;
 import ro.xzya.managers.GameStateManager;
 import ro.xzya.managers.Jukebox;
 
 public class Game extends ApplicationAdapter {
+
+    public static File sdcard;
 
     public static boolean isMobile = false;
 
@@ -29,10 +33,15 @@ public class Game extends ApplicationAdapter {
 
     private GameStateManager gsm;
 
+    public Game(File sdcard) {
+        this.sdcard = sdcard;
+    }
+
 	@Override
 	public void create () {
 
         Gdx.graphics.setDisplayMode(1920, 1080, false);
+//        Gdx.graphics.setDisplayMode(1280, 720, true);
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
 

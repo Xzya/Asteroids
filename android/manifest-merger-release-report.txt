@@ -17,6 +17,10 @@ ADDED from AndroidManifest.xml:7:5
 		ADDED from AndroidManifest.xml:7:41
 	android:minSdkVersion
 		ADDED from AndroidManifest.xml:7:15
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:8:5
+	android:name
+		ADDED from AndroidManifest.xml:8:22
 application
 ADDED from AndroidManifest.xml:9:5
 	android:label

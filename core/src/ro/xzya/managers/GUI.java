@@ -23,7 +23,7 @@ public class GUI {
     private volatile boolean pressedOK;
     private volatile boolean pressedBack;
 
-    private static final int dpSize1 = ((int)(Game.WIDTH * 0.05)); //button margin
+    private static final int dpSize1 = ((int)(Game.WIDTH * 0.07)); //button margin
     private static final int dpSize2 = ((int)(Game.HEIGHT * 0.10)); //button margin
 
     private Rectangle wleftBounds;

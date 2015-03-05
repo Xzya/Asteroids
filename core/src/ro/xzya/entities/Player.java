@@ -55,8 +55,8 @@ public class Player extends SpaceObject {
         x = Game.WIDTH / 2;
         y = Game.HEIGHT / 2;
 
-        maxSpeed = 300;
-        acceleration = 200;
+        maxSpeed = 400;
+        acceleration = 300;
         deceleration = 10;
 
         shapex = new float[4];

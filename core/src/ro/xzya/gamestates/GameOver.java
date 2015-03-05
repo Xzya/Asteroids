@@ -23,11 +23,11 @@ public class GameOver extends GameState {
     private static final int dpSize2 = ((int) (Game.HEIGHT * 0.08)); //32dp
     private static final int dpSize3 = ((int) (Game.HEIGHT * 0.55)); //220dp
     private static final int dpSize4 = ((int) (Game.HEIGHT * 0.45)); //220dp
-    private static final int dpSize5 = ((int) (Game.WIDTH * 0.46));
-    private static final int dpSize6 = ((int) (Game.WIDTH * 0.028)); //14
+    private static final int dpSize5 = ((int) (Game.WIDTH * 0.44));
+    private static final int dpSize6 = ((int) (Game.WIDTH * 0.023)); //14
     private static final int dpSize7 = ((int) (Game.HEIGHT * 0.3)); //120
     private static final int dpSize8 = ((int) (Game.HEIGHT * 0.25)); //100
-    private static final int dpSize9 = ((int) (Game.WIDTH * 0.488)); //244
+    private static final int dpSize9 = ((int) (Game.WIDTH * 0.45396)); //244
 
     private Vector3 touchPoint;
 
