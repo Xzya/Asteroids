@@ -11,8 +11,6 @@ import ro.xzya.managers.GameStateManager;
 import ro.xzya.managers.Jukebox;
 
 public class Game extends ApplicationAdapter {
-    public static String client;
-    public static final String BASE_URL = "../android/assets/";
 
 	SpriteBatch batch;
 	Texture img;
@@ -22,10 +20,6 @@ public class Game extends ApplicationAdapter {
 
     public static OrthographicCamera cam;
     private GameStateManager gsm;
-
-	public Game(String _client) {
-        client = _client;
-    }
 
 	@Override
 	public void create () {
@@ -58,19 +52,15 @@ public class Game extends ApplicationAdapter {
 	}
 
     private void loadSoundFiles() {
-        String s = "";
-        if (client.equals("desktop")) {
-            s += BASE_URL;
-        }
-        Jukebox.load(s + "sounds/explode.ogg", "explode");
-        Jukebox.load(s + "sounds/extralife.ogg", "extralife");
-        Jukebox.load(s + "sounds/largesaucer.ogg", "largesaucer");
-        Jukebox.load(s + "sounds/pulsehigh.ogg", "pulsehigh");
-        Jukebox.load(s + "sounds/pulselow.ogg", "pulselow");
-        Jukebox.load(s + "sounds/saucershoot.ogg", "saucershoot");
-        Jukebox.load(s + "sounds/shoot.ogg", "shoot");
-        Jukebox.load(s + "sounds/smallsaucer.ogg", "smallsaucer");
-        Jukebox.load(s + "sounds/thruster.ogg", "thruster");
+        Jukebox.load("sounds/explode.ogg", "explode");
+        Jukebox.load("sounds/extralife.ogg", "extralife");
+        Jukebox.load("sounds/largesaucer.ogg", "largesaucer");
+        Jukebox.load("sounds/pulsehigh.ogg", "pulsehigh");
+        Jukebox.load("sounds/pulselow.ogg", "pulselow");
+        Jukebox.load("sounds/saucershoot.ogg", "saucershoot");
+        Jukebox.load("sounds/shoot.ogg", "shoot");
+        Jukebox.load("sounds/smallsaucer.ogg", "smallsaucer");
+        Jukebox.load("sounds/thruster.ogg", "thruster");
     }
 
 }

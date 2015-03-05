@@ -47,13 +47,9 @@ public class MenuState extends GameState {
         sb = new SpriteBatch();
         sr = new ShapeRenderer();
 
-        String s = "";
-        if (Game.client.equals("desktop")) {
-            s += Game.BASE_URL;
-        }
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
 
-                Gdx.files.internal(s + "fonts/Hyperspace Bold.ttf")
+                Gdx.files.internal("fonts/Hyperspace Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 56;
