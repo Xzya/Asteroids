@@ -177,6 +177,11 @@ public class GUI {
         for (EventListener e : listeners) {
             Game.gui.getaWRightBounds().removeListener(e);
         }
+        listeners = Game.gui.getaBack().getListeners();
+        for (EventListener e : listeners) {
+            Game.gui.getaBack().removeListener(e);
+        }
+
     }
 
     public boolean isPressedA() {
