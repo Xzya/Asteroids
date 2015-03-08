@@ -40,8 +40,7 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void create () {
 
-        Gdx.graphics.setDisplayMode(1920, 1080, false);
-//        Gdx.graphics.setDisplayMode(1280, 720, true);
+        Gdx.graphics.setDisplayMode(800, 600, false);
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
 
@@ -66,17 +65,12 @@ public class Game extends ApplicationAdapter {
         loadSoundFiles();
 
         gsm = new GameStateManager();
-//		batch = new SpriteBatch();
-//		img = new Texture("../android/assets/badlogic.jpg");
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//		batch.begin();
-//		batch.draw(img, 0, 0);
-//		batch.end();
 
         gsm.update(Gdx.graphics.getDeltaTime());
         gsm.draw();
